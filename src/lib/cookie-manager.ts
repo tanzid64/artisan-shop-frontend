@@ -1,8 +1,9 @@
 import Cookies, { CookieSetOptions } from "universal-cookie";
+import { config } from "./config";
 
 class CookieManager {
   private cookies: Cookies;
-  public cookiePrefix = "artisan_shop_";
+  public cookiePrefix = config.env.COOKIE_PREFIX;
 
   constructor() {
     this.cookies = new Cookies();
@@ -28,7 +29,7 @@ class CookieManager {
     this.setCookie("token", token, {
       path: "/",
     });
-    this.setCookie("role", role, { 
+    this.setCookie("role", role, {
       path: "/",
     });
   }
