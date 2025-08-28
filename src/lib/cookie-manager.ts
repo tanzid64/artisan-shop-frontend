@@ -2,6 +2,7 @@ import Cookies, { CookieSetOptions } from "universal-cookie";
 
 class CookieManager {
   private cookies: Cookies;
+  public cookiePrefix = "artisan_shop_";
 
   constructor() {
     this.cookies = new Cookies();
@@ -9,32 +10,32 @@ class CookieManager {
 
   // ** Set Cookie
   setCookie(name: string, value: string, options: CookieSetOptions) {
-    this.cookies.set(name, value, options);
+    this.cookies.set(this.cookiePrefix + name, value, options);
   }
 
   // ** Get Cookie
   getCookie(name: string): string | undefined {
-    return this.cookies.get(name);
+    return this.cookies.get(this.cookiePrefix + name);
   }
 
   // ** Remove Cookie
   removeCookie(name: string) {
-    this.cookies.remove(name, { path: "/" });
+    this.cookies.remove(this.cookiePrefix + name, { path: "/" });
   }
 
   // ** Set Authentication Token -> Time to live unlimited
   setAuthToken({ token, role }: { token: string; role: string }) {
-    this.setCookie("auth_token", token, {
+    this.setCookie("token", token, {
       path: "/",
     });
-    this.setCookie("role", role, {
+    this.setCookie("role", role, { 
       path: "/",
     });
   }
 
   // ** Get Authentication Token
   getAuthToken(): string | undefined {
-    return this.cookies.get("auth_token");
+    return this.cookies.get("token");
   }
 
   // ** Get Role

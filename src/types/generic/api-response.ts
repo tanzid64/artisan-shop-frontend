@@ -1,8 +1,8 @@
-export interface BaseApiResponse<T = unknown> {
+export interface IApiResponse<T = unknown> {
   status: number;
   success: boolean;
   message: string;
-  data: T;
+  data: T | null;
   errors?: Record<string, string[]> | string[] | null;
 }
 
