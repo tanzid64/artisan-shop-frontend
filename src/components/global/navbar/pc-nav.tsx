@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   NavigationMenu,
@@ -12,9 +12,10 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-import { Mail, Phone, Search, ShoppingCart, User } from "lucide-react";
+import { LogIn, Mail, Phone, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Cart } from "./cart";
 
 export const PCNavBar = () => {
   // Handle Scroll Nav
@@ -179,20 +180,11 @@ export const PCNavBar = () => {
                 Contact
               </Button>
 
-              <Button className=" text-white">
-                <User className="h-4 w-4 mr-2" />
-                Login
-              </Button>
+              <Link href={"/login"} className={buttonVariants({ variant: "ghost" })}>
+                <LogIn /> Login
+              </Link>
 
-              <Button variant="ghost" className="relative ">
-                <ShoppingCart className="h-5 w-5" />
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-2 -right-2 bg-red-500 text-xs"
-                >
-                  5
-                </Badge>
-              </Button>
+              <Cart />
             </div>
           </div>
         </div>
