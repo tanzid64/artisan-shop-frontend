@@ -1,18 +1,16 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { cookies } from "next/headers";
 import { NavBar } from "./nav-bar";
 import { AppSidebar } from "./sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  sidebarItems: { name: string; href: string; icon: React.ReactNode }[];
 }
-export const DashboardLayout = ({
-  children,
-  sidebarItems,
-}: DashboardLayoutProps) => {
+export const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
+  const role = (await cookies()).get("role")?.value ?? "user";
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar role={role} />
       <SidebarInset>
         <NavBar />
         {children}

@@ -1,30 +1,72 @@
+"use client";
+import { Logo } from "@/components/global/logo/logo";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { ADMIN_MENU, USER_MENU, VENDOR_MENU } from "@/lib/constants";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useMemo } from "react";
+import { CollapsibleMenu } from "./collapsible-menu";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  role,
+  ...props
+}: { role: string } & React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+  const menues = useMemo(() => {
+    if (role === "admin") return ADMIN_MENU;
+    if (role === "vendor") return VENDOR_MENU;
+    return USER_MENU;
+  }, [role]);
   return (
-    <Sidebar {...props} collapsible="icon" variant="inset">
+    <Sidebar {...props} collapsible="icon" variant="sidebar">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton size={"lg"} asChild>
               <Link href="/" prefetch>
-                Logo
+                <Logo />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent></SidebarContent>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            {menues.map((item) =>
+              item.children ? (
+                <CollapsibleMenu item={item} key={item.id} />
+              ) : (
+                <SidebarMenu key={item.id}>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      tooltip={item.label}
+                      asChild
+                      isActive={pathname === item.href}
+                    >
+                      <Link href={item.href} prefetch>
+                        {item.icon && <item.icon />}
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              )
+            )}
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
       <SidebarFooter></SidebarFooter>
     </Sidebar>
