@@ -13,7 +13,7 @@ export const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
       <AppSidebar role={role} />
       <SidebarInset>
         <NavBar />
-        {children}
+        <main className="px-2.5 py-2">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
