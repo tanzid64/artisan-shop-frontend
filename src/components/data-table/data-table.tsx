@@ -1,10 +1,13 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
+  SortingState,
 } from "@tanstack/react-table";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
@@ -16,51 +19,90 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { useState } from "react";
+
 interface DataTableProps<T> {
-  columns: ColumnDef<T>[];
-  data: T[];
-  isFetching?: boolean;
-  emptyMessage?: string;
+  columns: ColumnDef<T>[]; // columns definitions
+  data: T[]; // data array
+  isFetching?: boolean; // loading state
+  emptyMessage?: string; // message for empty table
+  sortable?: boolean; // enable client-side sorting
+  onSortChange?: (sortBy: string, sortDir: "asc" | "desc") => void; // server-side sort callback
 }
+
 export const DataTable = <T,>({
   columns,
   data,
   isFetching = false,
   emptyMessage = "No data found",
+  sortable = false,
+  onSortChange,
 }: DataTableProps<T>) => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns: columns as ColumnDef<T>[],
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true,
+    getSortedRowModel: sortable ? getSortedRowModel() : undefined,
+    manualSorting: !!onSortChange, // true if server-side sorting
+    state: {
+      sorting,
+    },
+    onSortingChange: (newSorting) => {
+      // Handle Updater<SortingState> type
+      const sortingState: SortingState =
+        typeof newSorting === "function"
+          ? newSorting([])
+          : newSorting;
+
+      setSorting(sortingState);
+      // Call server-side sort callback
+      if (onSortChange && sortingState.length > 0) {
+        const sortBy = sortingState[0].id;
+        const sortDir = sortingState[0].desc ? "desc" : "asc";
+        onSortChange(sortBy, sortDir);
+      }
+    },
   });
+
   return (
     <ScrollArea>
       <Table className="text-xs mb-3">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-slate-500">
-              {headerGroup.headers.map((header) => (
-                <TableHead
-                  key={header.id}
-                  className={cn(
-                    (header.column.columnDef?.meta as { className?: string })
-                      ?.className,
-                    "text-white",
-                    {
-                      "w-[3%] text-center whitespace-nowrap":
-                        header.column.id === "Sl/No",
-                    }
-                  )}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                const sortableMeta = (
+                  header.column.columnDef.meta as { sortable?: boolean }
+                )?.sortable;
+
+                return (
+                  <TableHead
+                    key={header.id}
+                    className={cn(
+                      (header.column.columnDef?.meta as { className?: string })
+                        ?.className,
+                      "border",
+                      {
+                        "cursor-pointer select-none": sortableMeta,
+                      }
+                    )}
+                    onClick={() => {
+                      if (sortableMeta) {
+                        header.column.toggleSorting?.();
+                      }
+                    }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
         </TableHeader>
@@ -74,7 +116,7 @@ export const DataTable = <T,>({
                 </TableCell>
               </TableRow>
             ))
-          ) : table.getRowModel()?.rows?.length ? (
+          ) : table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row, idx) => (
               <TableRow
                 key={row.id}
@@ -88,11 +130,7 @@ export const DataTable = <T,>({
                     className={cn(
                       (cell.column.columnDef?.meta as { className?: string })
                         ?.className,
-                      {
-                        "w-[3%] text-center whitespace-nowrap":
-                          cell.column.id === "Sl/No" ||
-                          cell.column.id === "SL/No",
-                      }
+                      "border"
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
