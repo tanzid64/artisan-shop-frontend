@@ -2,10 +2,12 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { Pagination } from "@/components/data-table/pagination";
 import { SortColumnHeader } from "@/components/data-table/sort-col-header";
+import { Badge } from "@/components/ui/badge";
 import { useSlider } from "@/hooks/dashbaord/admin/use-slider";
 import { ISliders } from "@/types/auth/dashboard/admin/sliders";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
+import { SliderFilter } from "./slider-filter";
 
 export const SliderTable = () => {
   const { data, isLoading, filterData, setFilterData } = useSlider();
@@ -20,6 +22,7 @@ export const SliderTable = () => {
           const perPage = data?.per_page ?? 10;
           return <div>{serial + (page - 1) * perPage}</div>;
         },
+        meta: { className: "text-center w-[5%]" },
       },
       {
         accessorKey: "type",
@@ -42,16 +45,24 @@ export const SliderTable = () => {
       { accessorKey: "starting_price", header: "Starting Price" },
       {
         accessorKey: "serial",
-        header: () => (
-          <SortColumnHeader
-            title="Serial"
-            name="serial"
-            filterData={filterData}
-          />
-        ),
-        meta: { sortable: true },
+        header: "Serial",
+        meta: { className: "text-center w-[5%]" },
       },
-      { accessorKey: "status_name", header: "Status" },
+      {
+        accessorKey: "status_name",
+        header: "Status",
+        cell: ({ row }) => (
+          <Badge variant={"outline"}>
+            {row.original.status ? (
+              <div className="size-2 bg-green-500 rounded-full" />
+            ) : (
+              <div className="size-2 bg-red-500 rounded-full" />
+            )}
+            {row.original.status_name}
+          </Badge>
+        ),
+        meta: { className: "text-center" },
+      },
       { accessorKey: "status", header: "Action" },
     ],
     [data?.current_page, data?.per_page, filterData]
@@ -59,6 +70,7 @@ export const SliderTable = () => {
 
   return (
     <div>
+      <SliderFilter setFilterData={setFilterData} />
       <DataTable
         columns={columns}
         data={data?.data ?? []}

@@ -6,9 +6,10 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
-  useReactTable,
   SortingState,
+  useReactTable,
 } from "@tanstack/react-table";
+import { useState } from "react";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
 import {
@@ -19,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useState } from "react";
 
 interface DataTableProps<T> {
   columns: ColumnDef<T>[]; // columns definitions
@@ -52,9 +52,7 @@ export const DataTable = <T,>({
     onSortingChange: (newSorting) => {
       // Handle Updater<SortingState> type
       const sortingState: SortingState =
-        typeof newSorting === "function"
-          ? newSorting([])
-          : newSorting;
+        typeof newSorting === "function" ? newSorting([]) : newSorting;
 
       setSorting(sortingState);
       // Call server-side sort callback
@@ -110,8 +108,8 @@ export const DataTable = <T,>({
         <TableBody>
           {isFetching ? (
             [...Array(15)].map((_, i) => (
-              <TableRow key={i}>
-                <TableCell colSpan={columns.length}>
+              <TableRow key={i} className="border">
+                <TableCell colSpan={columns.length} className="border">
                   <Skeleton className="h-6 w-full bg-muted" />
                 </TableCell>
               </TableRow>
@@ -140,7 +138,10 @@ export const DataTable = <T,>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center border"
+              >
                 {emptyMessage}
               </TableCell>
             </TableRow>
