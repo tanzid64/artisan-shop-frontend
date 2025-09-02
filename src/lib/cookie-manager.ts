@@ -36,7 +36,7 @@ class CookieManager {
 
   // ** Get Authentication Token
   getAuthToken(): string | undefined {
-    return this.cookies.get("token");
+    return this.getCookie("token");
   }
 
   // ** Get Role

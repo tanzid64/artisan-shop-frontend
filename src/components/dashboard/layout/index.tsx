@@ -1,4 +1,5 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { config } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NavBar } from "./nav-bar";
 import { AppSidebar } from "./sidebar";
@@ -7,7 +8,8 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 export const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-  const role = (await cookies()).get("role")?.value ?? "user";
+  const role =
+    (await cookies()).get(`${config.env.COOKIE_PREFIX}role`)?.value ?? "user";
   return (
     <SidebarProvider>
       <AppSidebar role={role} />

@@ -1,6 +1,7 @@
 import { DashboardHeader } from "@/components/dashboard/header";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { type Metadata } from "next";
+import { SliderTable } from "./_components/slider-table";
 
 export const metadata: Metadata = {
   title: "Sliders - Admin Settings",
@@ -21,7 +22,10 @@ export default function SlidersPage() {
           breadcrumb={Breadcrumb}
         />
       </CardHeader>
-      <CardContent>{/* Slider Data Table */}</CardContent>
+      <CardContent>
+        {/* Slider Data Table */}
+        <SliderTable />
+      </CardContent>
     </Card>
   );
 }

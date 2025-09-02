@@ -9,6 +9,7 @@ const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    Authorization: `Bearer ${cookieManager.getAuthToken()}`,
   },
 });
 
@@ -84,6 +85,8 @@ api.interceptors.response.use(
           // Retry the original request with new token
           originalRequest.headers.Authorization = `Bearer ${cookieManager.getAuthToken()}`;
           return api(originalRequest);
+        } else {
+          throw new Error("Token refresh failed");
         }
       } catch (error) {
         console.error("Token refresh failed:", error);
