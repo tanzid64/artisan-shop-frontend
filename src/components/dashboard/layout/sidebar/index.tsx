@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { ADMIN_MENU, USER_MENU, VENDOR_MENU } from "@/lib/constants";
 import Link from "next/link";
@@ -22,6 +23,7 @@ export function AppSidebar({
   ...props
 }: { role: string } & React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
   const menues = useMemo(() => {
     if (role === "admin") return ADMIN_MENU;
     if (role === "vendor") return VENDOR_MENU;
@@ -54,6 +56,7 @@ export function AppSidebar({
                       tooltip={item.label}
                       asChild
                       isActive={pathname === item.href}
+                      onClick={() => setOpenMobile(false)}
                     >
                       <Link href={item.href} prefetch>
                         {item.icon && <item.icon />}

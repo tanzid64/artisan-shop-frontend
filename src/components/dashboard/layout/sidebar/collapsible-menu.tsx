@@ -11,6 +11,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { IMenuItem } from "@/lib/constants";
 import { ChevronRight } from "lucide-react";
@@ -19,6 +20,7 @@ import { usePathname } from "next/navigation";
 
 export const CollapsibleMenu = ({ item }: { item: IMenuItem }) => {
   const pathname = usePathname();
+  const { setOpenMobile } = useSidebar();
   return (
     <Collapsible
       title={item.label}
@@ -44,6 +46,7 @@ export const CollapsibleMenu = ({ item }: { item: IMenuItem }) => {
                     <SidebarMenuSubButton
                       asChild
                       isActive={pathname === item.href}
+                      onClick={() => setOpenMobile(false)}
                     >
                       <Link href={item.href}>{item.label}</Link>
                     </SidebarMenuSubButton>
